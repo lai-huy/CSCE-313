@@ -1,0 +1,8 @@
+.vscode/
+.github/
+Classwork/
+
+Textbook.pdf
+*.out
+*.debug
+*.gpg

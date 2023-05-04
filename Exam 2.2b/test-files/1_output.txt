@@ -1,0 +1,15 @@
+Order: BURGER
+Order: FRIES
+Order: BURGER
+Waiting: FRIES
+Waiting: BURGER
+Waiting: FRIES
+Waiting: BURGER
+Waiting: FRIES
+Waiting: BURGER
+Order: BURGER
+Order: BURGER
+Order: BURGER
+Order: FRIES
+Order: FRIES
+Order: FRIES

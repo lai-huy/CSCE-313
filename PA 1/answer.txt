@@ -1,0 +1,6 @@
+The main bottleneck of the program when transfering large files is the size of the buffer.
+With larger bufferes, more of the file can be coppied at once.
+However, the drawback with larger bufferes is the increased time to flush the buffer to the duplicated file.
+
+In contrast, smaller bufferes can only copy smaller blocks of the file at once.
+However, file transfers become more frequent.

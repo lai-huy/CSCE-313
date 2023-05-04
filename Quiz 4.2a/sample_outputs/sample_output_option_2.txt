@@ -1,0 +1,56 @@
+$ sudo python3 sniffer.py 
+*******************Main Menu*******************
+1. Create and send packets
+2. Listen to all traffic to 8.8.4.4 for 1 minute
+3. Listen continuously to only ping commands to 8.8.4.4
+4. Listen continuously to only outgoing telnet commands
+5. Quit
+***********************************************
+
+Choose a menu option: 2
+Listening to all traffic to 8.8.4.4 for 1 minute ...
+Source IP: 192.168.10.4
+Destination IP: 8.8.4.4
+Protocol number: 6
+TTL: 26
+Length in bytes: 93
+Raw payload: b'RISC-V Education: https://riscvedu.org/'
+
+
+Source IP: 192.168.10.4
+Destination IP: 8.8.4.4
+Protocol number: 6
+TTL: 26
+Length in bytes: 93
+Raw payload: b'RISC-V Education: https://riscvedu.org/'
+
+
+Source IP: 192.168.10.4
+Destination IP: 8.8.4.4
+Protocol number: 6
+TTL: 26
+Length in bytes: 93
+Raw payload: b'RISC-V Education: https://riscvedu.org/'
+
+
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 1
+TTL: 64
+Length in bytes: 98
+Raw payload: b'\x85\xf5Id\x00\x00\x00\x00\xf9\x99\x02\x00\x00\x00\x00\x00\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./01234567'
+
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 6
+TTL: 64
+Length in bytes: 74
+Raw payload: None
+
+
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 17
+TTL: 1
+Length in bytes: 74
+Raw payload: b'@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'

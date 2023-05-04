@@ -1,0 +1,24 @@
+$ sudo python3 sniffer.py 
+*******************Main Menu*******************
+1. Create and send packets
+2. Listen to all traffic to 8.8.4.4 for 1 minute
+3. Listen continuously to only ping commands to 8.8.4.4
+4. Listen continuously to only outgoing telnet commands
+5. Quit
+***********************************************
+
+Choose a menu option: 1
+Creating and sending packets ...
+How many packets? 3
+How many seconds in between sending? 2
+...
+Sent 3 packets.
+*******************Main Menu*******************
+1. Create and send packets
+2. Listen to all traffic to 8.8.4.4 for 1 minute
+3. Listen continuously to only ping commands to 8.8.4.4
+4. Listen continuously to only outgoing telnet commands
+5. Quit
+***********************************************
+
+Choose a menu option: 

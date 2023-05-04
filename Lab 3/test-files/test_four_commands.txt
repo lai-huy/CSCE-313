@@ -1,0 +1,1 @@
+cat makefile | grep all: | tr a-z A-Z | awk '{print $1}'

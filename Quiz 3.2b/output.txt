@@ -1,0 +1,12 @@
+Student 0 checked out 90 books.
+Student 5 checked out 5 books.
+Student 0 checked in 90 books.
+Student 1 checked out 90 books.
+Student 5 checked in 5 books.
+Student 1 checked in 90 books.
+Student 2 checked out 40 books.
+Student 4 checked out 30 books.
+Student 2 checked in 40 books.
+Student 4 checked in 30 books.
+Student 3 checked out 50 books.
+Student 3 checked in 50 books.

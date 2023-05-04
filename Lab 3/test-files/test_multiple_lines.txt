@@ -1,0 +1,2 @@
+ls -a /
+cat shell.cpp | head -5

@@ -1,0 +1,49 @@
+$ sudo python3 sniffer.py 
+*******************Main Menu*******************
+1. Create and send packets
+2. Listen to all traffic to 8.8.4.4 for 1 minute
+3. Listen continuously to only ping commands to 8.8.4.4
+4. Listen continuously to only outgoing telnet commands
+5. Quit
+***********************************************
+
+Choose a menu option: 4
+Listening continuously to only outgoing telnet commands ...
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 6
+TTL: 64
+Length in bytes: 74
+Raw payload: None
+
+
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 6
+TTL: 64
+Length in bytes: 74
+Raw payload: None
+
+
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 6
+TTL: 64
+Length in bytes: 74
+Raw payload: None
+
+
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 6
+TTL: 64
+Length in bytes: 74
+Raw payload: None
+
+
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 6
+TTL: 64
+Length in bytes: 74
+Raw payload: None

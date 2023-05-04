@@ -1,0 +1,49 @@
+$ sudo python3 sniffer.py 
+*******************Main Menu*******************
+1. Create and send packets
+2. Listen to all traffic to 8.8.4.4 for 1 minute
+3. Listen continuously to only ping commands to 8.8.4.4
+4. Listen continuously to only outgoing telnet commands
+5. Quit
+***********************************************
+
+Choose a menu option: 3
+Listening continuously to only ping commands to 8.8.4.4 ...
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 1
+TTL: 64
+Length in bytes: 98
+Raw payload: b'\xb7\x01Jd\x00\x00\x00\x00\xa5\x9b\x04\x00\x00\x00\x00\x00\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./01234567'
+
+
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 1
+TTL: 64
+Length in bytes: 98
+Raw payload: b'\xb8\x01Jd\x00\x00\x00\x00\xe2\x9f\x04\x00\x00\x00\x00\x00\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./01234567'
+
+
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 1
+TTL: 64
+Length in bytes: 98
+Raw payload: b'\xb9\x01Jd\x00\x00\x00\x00R\xa5\x04\x00\x00\x00\x00\x00\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./01234567'
+
+
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 1
+TTL: 64
+Length in bytes: 98
+Raw payload: b'\xba\x01Jd\x00\x00\x00\x00s\xaa\x04\x00\x00\x00\x00\x00\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./01234567'
+
+
+Source IP: 10.128.0.3
+Destination IP: 8.8.4.4
+Protocol number: 1
+TTL: 64
+Length in bytes: 98
+Raw payload: b'\xbb\x01Jd\x00\x00\x00\x00+\xb0\x04\x00\x00\x00\x00\x00\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f !"#$%&\'()*+,-./01234567'

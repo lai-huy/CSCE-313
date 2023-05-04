@@ -1,0 +1,10 @@
+System Time [0].........Process[PID=1] is Running
+System Time [1].........Process[PID=1] is Running
+System Time [2].........Process[PID=1] finished its job!
+System Time [2].........Process[PID=NOP] is Running
+System Time [3].........Process[PID=NOP] is Running
+System Time [4].........Process[PID=2] is Running
+System Time [5].........Process[PID=2] is Running
+System Time [6].........Process[PID=2] is Running
+System Time [7].........Process[PID=2] is Running
+System Time [8].........Process[PID=2] finished its job!

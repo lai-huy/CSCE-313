@@ -1,0 +1,6 @@
+Number of threads: 2
+Cache padding for coherency: 64 bytes
+---
+Pi approximation: 3.141593
+Time to complete part 1: 4.629467 seconds
+Time to complete part 2: 1.023926 seconds
