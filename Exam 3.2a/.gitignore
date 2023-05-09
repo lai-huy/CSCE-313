@@ -1,4 +1,7 @@
 decrypted.txt
 encrypted.txt
+signed_msg.txt
+sus_decrypted.txt
+
 private.pem
 public.pem
