@@ -137,11 +137,11 @@ void traceroute(char* dest) {
                  * a. check man page of recvfrom, function returns bytes received
                  * b. ensure data is received in recv_buf
                  */
-                socklen_t addrlen = sizeof(sockaddr_in);
-                memset(recv_buf, 0, PACKET_LEN);
-                int recv_len = recvfrom(sockfd, recv_buf, PACKET_LEN, 0, (struct sockaddr*) &addr, &addrlen);
-                if (recv_len < 0) {
-                    perror("recvfrom failed");
+                sockaddr_in sender;
+                socklen_t sender_len = sizeof(sender);
+                int recv_size = recvfrom(sockfd, recv_buf, PACKET_LEN, 0, (sockaddr*) &sender, &sender_len);
+                if (recv_size < 0) {
+                    perror("recvfrom error");
                     exit(-1);
                 }
 
@@ -162,14 +162,15 @@ void traceroute(char* dest) {
                  * c. otherwise ignore packet
                  *
                  */
-                ipheader* ip = (ipheader*) recv_buf;
-                int iphdr_len = ip->iph_ihl * 4;
-                icmpheader* icmp_recv = (icmpheader*) (recv_buf + iphdr_len);
-                if (icmp_recv->icmp_type == ICMP_TIME_EXCEEDED && icmp_recv->icmp_seq == ttl) {
+                ipheader* ip_hdr = (ipheader*) recv_buf;
+                printf("%s ", inet_ntoa(ip_hdr->iph_sourceip));
+
+                icmpheader* icmp_hdr = (icmpheader*) (recv_buf + sizeof(ipheader));
+                if (icmp_hdr->icmp_type == ICMP_TIME_EXCEEDED && icmp_hdr->icmp_seq == ttl) {
                     printf(" %s ", inet_ntoa(addr.sin_addr));
                     printf("time exceeded\n");
                     break;
-                } else if (icmp_recv->icmp_type == ICMP_ECHO_REPLY) {
+                } else if (icmp_hdr->icmp_type == ICMP_ECHO_REPLY) {
                     printf(" %s ", inet_ntoa(addr.sin_addr));
                     printf("%ldms\n", (1000 * (1000000 - tv.tv_usec)) / 1000000);
                     break;
