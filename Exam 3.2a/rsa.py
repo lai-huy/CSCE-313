@@ -186,7 +186,7 @@ if __name__ == "__main__":
             #           the public key from part a.1
             public_key_path = "public.pem"
             signature = open("signed_msg.txt", "rb").read()
-            verify_message(message, signature, public_key_path)
+            verify_message(message.encode(), signature, public_key_path)
 
         elif option == "d":
             # part d: identify the real Reveille's signature
