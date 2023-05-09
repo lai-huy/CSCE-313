@@ -129,7 +129,7 @@ void traceroute(char* dest) {
              * b. if ret > 0: data available, use recvfrom(...) to read data to recv_buf and process --> see TODO 5 below
              */
             if (ret == 0) {
-                printf(" *"); // timeout
+                printf(" *\n"); // timeout
                 if (++retry > MAX_RETRY)
                     break;
             } else if (ret > 0) {
@@ -166,10 +166,10 @@ void traceroute(char* dest) {
                 ipheader* ip = (ipheader*) recv_buf;
                 icmpheader* icmp = (icmpheader*) (recv_buf + sizeof(ipheader));
                 if (icmp->icmp_type == ICMP_ECHO_REPLY) {
-                    printf("%s ", inet_ntoa(ip->iph_sourceip));
+                    printf("%s \n", inet_ntoa(ip->iph_sourceip));
                     break;
                 } else if (icmp->icmp_type == ICMP_TIME_EXCEEDED)
-                    printf("%s ", inet_ntoa(ip->iph_sourceip));
+                    printf("%s \n", inet_ntoa(ip->iph_sourceip));
                 else
                     printf("unknown packet type %d\n", icmp->icmp_type);
             } else {
