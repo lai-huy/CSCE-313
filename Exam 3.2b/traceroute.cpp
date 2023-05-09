@@ -114,9 +114,10 @@ void traceroute(char* dest) {
                 exit(-1);
             }
 
-            // wait to check if there is data available to receive; need to retry if timeout: no need to change
             timeval tv;
             fd_set rfd;
+
+            // wait to check if there is data available to receive; need to retry if timeout: no need to change
             tv.tv_sec = 1;
             tv.tv_usec = 0;
             FD_ZERO(&rfd);
@@ -129,8 +130,12 @@ void traceroute(char* dest) {
              * b. if ret > 0: data available, use recvfrom(...) to read data to recv_buf and process --> see TODO 5 below
              */
             if (ret == 0) {
-                printf(" *"); // timeout
-                ++retry;
+                printf("* "); // timeout
+                if (++retry >= MAX_RETRY) {
+                    ++ttl;
+                    printf("\n");
+                    break;
+                }
             } else if (ret > 0) {
                 // TODO 4.b
                 /** HINT:
@@ -162,18 +167,27 @@ void traceroute(char* dest) {
                  * c. otherwise ignore packet
                  *
                  */
-                ipheader* ip_hdr = (ipheader*) recv_buf;
-                printf("%s ", inet_ntoa(ip_hdr->iph_sourceip));
 
-                icmpheader* icmp_hdr = (icmpheader*) (recv_buf + sizeof(ipheader));
-                if (icmp_hdr->icmp_type == ICMP_TIME_EXCEEDED && icmp_hdr->icmp_seq == ttl) {
-                    printf(" %s ", inet_ntoa(addr.sin_addr));
-                    printf("time exceeded\n");
-                    break;
-                } else if (icmp_hdr->icmp_type == ICMP_ECHO_REPLY) {
-                    printf(" %s ", inet_ntoa(addr.sin_addr));
-                    printf("%ldms\n", (1000 * (1000000 - tv.tv_usec)) / 1000000);
-                    break;
+                ipheader* ip_hdr1 = (ipheader*) recv_buf;
+                icmpheader* icmp_hdr1 = (icmpheader*) (recv_buf + sizeof(ipheader));
+
+                unsigned long size = (sizeof(ipheader) + sizeof(icmpheader)) << 1;
+                if (recv_size >= size) {
+                    ipheader* ip_hdr2 = (ipheader*) (recv_buf + sizeof(ipheader) + sizeof(icmpheader));
+                    icmpheader* icmp_hdr2 = (icmpheader*) (recv_buf + 2 * sizeof(ipheader) + sizeof(icmpheader));
+
+                    if (icmp_hdr1->icmp_type == ICMP_TIME_EXCEEDED && icmp_hdr2->icmp_seq == ttl && icmp_hdr2->icmp_id == getpid()) {
+                        char router_ip_str[INET_ADDRSTRLEN]{};
+                        inet_ntop(AF_INET, &(sender.sin_addr), router_ip_str, INET_ADDRSTRLEN);
+                        printf("%s\n", router_ip_str);
+                        ++ttl;
+                        break;
+                    }
+                } else if (icmp_hdr1->icmp_type == ICMP_ECHO_REPLY && icmp_hdr1->icmp_id == getpid()) {
+                    char router_ip_str[INET_ADDRSTRLEN]{};
+                    inet_ntop(AF_INET, &(sender.sin_addr), router_ip_str, INET_ADDRSTRLEN);
+                    printf("%s\n", router_ip_str);
+                    exit(EXIT_SUCCESS);
                 }
             } else {
                 perror("select failed");
@@ -184,7 +198,7 @@ void traceroute(char* dest) {
             /** TODO: 6
              * Check if timed out for MAX_RETRY times; increment ttl to move on to processing next hop
              */
-            if (retry == MAX_RETRY) {
+            if (retry >= MAX_RETRY) {
                 ++ttl;
                 printf("\n");
                 break;
