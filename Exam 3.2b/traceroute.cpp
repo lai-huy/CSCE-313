@@ -129,9 +129,8 @@ void traceroute(char* dest) {
              * b. if ret > 0: data available, use recvfrom(...) to read data to recv_buf and process --> see TODO 5 below
              */
             if (ret == 0) {
-                printf(" *\n"); // timeout
-                if (++retry > MAX_RETRY)
-                    break;
+                printf(" *"); // timeout
+                ++retry;
             } else if (ret > 0) {
                 // TODO 4.b
                 /** HINT:
@@ -164,14 +163,17 @@ void traceroute(char* dest) {
                  *
                  */
                 ipheader* ip = (ipheader*) recv_buf;
-                icmpheader* icmp = (icmpheader*) (recv_buf + sizeof(ipheader));
-                if (icmp->icmp_type == ICMP_ECHO_REPLY) {
-                    printf("%s \n", inet_ntoa(ip->iph_sourceip));
+                int iphdr_len = ip->iph_ihl * 4;
+                icmpheader* icmp_recv = (icmpheader*) (recv_buf + iphdr_len);
+                if (icmp_recv->icmp_type == ICMP_TIME_EXCEEDED && icmp_recv->icmp_seq == ttl) {
+                    printf(" %s ", inet_ntoa(addr.sin_addr));
+                    printf("time exceeded\n");
                     break;
-                } else if (icmp->icmp_type == ICMP_TIME_EXCEEDED)
-                    printf("%s \n", inet_ntoa(ip->iph_sourceip));
-                else
-                    printf("unknown packet type %d\n", icmp->icmp_type);
+                } else if (icmp_recv->icmp_type == ICMP_ECHO_REPLY) {
+                    printf(" %s ", inet_ntoa(addr.sin_addr));
+                    printf("%ldms\n", (1000 * (1000000 - tv.tv_usec)) / 1000000);
+                    break;
+                }
             } else {
                 perror("select failed");
                 exit(-1);
@@ -181,8 +183,11 @@ void traceroute(char* dest) {
             /** TODO: 6
              * Check if timed out for MAX_RETRY times; increment ttl to move on to processing next hop
              */
-            ++ttl;
-            break;
+            if (retry == MAX_RETRY) {
+                ++ttl;
+                printf("\n");
+                break;
+            }
         }
     }
     close(sockfd);
