@@ -116,13 +116,13 @@ def sign_message(message: str, priv_key_path: str, out_fname="signed_msg.txt") -
 
 
 # Verify a message using a public key
-def verify_message(message, signature, public_key_path):
+def verify_message(message: bytes, signature: str, public_key_path: str) -> bool:
     # import public key
     with open(public_key_path, 'rb') as file:
         public_key = RSA.import_key(file.read())
 
     # hash the message with SHA256
-    hashed_message = SHA256.new(message.encode())
+    hashed_message = SHA256.new(message)
 
     # verify the signature with the public RSA key using pkcs1_15
     try:
@@ -173,7 +173,7 @@ if __name__ == "__main__":
             message = open("sus.txt", "rb").read()
             key: str = find_decrypt_key(message)
 
-            decrypt_message(message, key)
+            decrypt_message(message, key, "sus_decrypted.txt")
 
         elif option == "c":
             # part c.1: sign a message using the private key from part a.1
@@ -200,13 +200,12 @@ if __name__ == "__main__":
             #           correct key, you will get full credit
             message = open("sus_decrypted.txt", "rb").read()
             signature = open("rev.txt", "rb").read()
-            public_key_path = "public.pem"
-            valid_signature = verify_message(
-                message, signature, public_key_path)
-            if valid_signature:
-                print("The signature in rev.txt is the real Reveille's signature.")
+            public_key_path = find_sign_key(message, signature)
+            valid_sig = verify_message(message, signature, public_key_path)
+            if valid_sig:
+                print(f"The signature in ${public_key_path} is valid.")
             else:
-                print("The signature in rev.txt is not valid.")
+                print(f"The signature in ${public_key_path} is not valid.")
 
         elif option == "q":
             break
