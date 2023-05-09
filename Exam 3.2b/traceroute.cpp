@@ -27,7 +27,7 @@ struct icmpheader {
     unsigned short int icmp_chksum; // Checksum for ICMP Header and data
     unsigned short int icmp_id;     // Used in echo request/reply to identify request
     unsigned short int icmp_seq;    // Identifies the sequence of echo messages,
-                                    // if more than one is sent.
+    // if more than one is sent.
 };
 
 #define ICMP_ECHO_REPLY     0
@@ -60,35 +60,41 @@ void traceroute(char* dest) {
         perror("failed gethostbyname");
         exit(-1);
     }
-    memcpy((char*)(&addr.sin_addr), getip->h_addr, getip->h_length);
+    memcpy((char*) (&addr.sin_addr), getip->h_addr, getip->h_length);
 
     printf("traceroute to %s (%s), %d hops max, %ld bytes packets\n", dest, inet_ntoa(addr.sin_addr), MAX_HOPS, sizeof(ipheader) + sizeof(icmpheader));
-    
+
     char send_buf[PACKET_LEN], recv_buf[PACKET_LEN];
     /** TODO: 1
      * Prepare packet
      * a. outgoing packets only contain the icmpheader with type = ICMP_ECHO_REQUEST, code = 0
      * b. ID in the icmpheader should be set to current process id to identify received ICMP packets
      * c. checksum can be set to 0 for this test
-     * d. write/copy the header to the send_buf  
-     * 
+     * d. write/copy the header to the send_buf
+     *
      * HINT:
      * - icmpheader* icmp = (icmpheader*)send_buf;
      * - set header fields with required values: icmp->field = value;
      * */
-    
+
+    icmpheader* icmp = (icmpheader*) send_buf;
+    icmp->icmp_type = ICMP_ECHO_REQUEST;
+    icmp->icmp_id = getpid();
+    icmp->icmp_chksum = 0;
+
     for (int ttl = 1; ttl <= MAX_HOPS; ) {
         printf("%2d ", ttl);
         /** TODO: 2
          * set the seq in icmpheader to ttl
-         * 
+         *
          * HINT:
          * similar to TODO 1 HINT, just set the seq
          */
-       
+        icmp->icmp_seq = ttl;
+
 
         // set ttl to outgoing packets: no need to change
-        if (setsockopt(sockfd, IPPROTO_IP, IP_TTL, (const char*)&ttl, sizeof(ttl)) < 0) {
+        if (setsockopt(sockfd, IPPROTO_IP, IP_TTL, (const char*) &ttl, sizeof(ttl)) < 0) {
             perror("setsockopt failed");
             exit(-1);
         }
@@ -97,15 +103,20 @@ void traceroute(char* dest) {
         while (1) {
             /** TODO: 3
              * send packet using sendto(...)
-             * 
+             *
              * HINT:
              * - check man page of sendto(...)
              * - ensure we send one icmpheader in the packet
-             * 
+             *
              */
-           
-           
+            if (sendto(sockfd, send_buf, sizeof(icmpheader), 0, (struct sockaddr*) &addr, sizeof(addr)) < 0) {
+                perror("sendto failed");
+                exit(-1);
+            }
+
             // wait to check if there is data available to receive; need to retry if timeout: no need to change
+            timeval tv;
+            fd_set rfd;
             tv.tv_sec = 1;
             tv.tv_usec = 0;
             FD_ZERO(&rfd);
@@ -118,15 +129,23 @@ void traceroute(char* dest) {
              * b. if ret > 0: data available, use recvfrom(...) to read data to recv_buf and process --> see TODO 5 below
              */
             if (ret == 0) {
-                // TODO 4.a
-            }
-            else if (ret > 0) {
+                printf(" *"); // timeout
+                if (++retry > MAX_RETRY)
+                    break;
+            } else if (ret > 0) {
                 // TODO 4.b
-                /** HINT: 
+                /** HINT:
                  * a. check man page of recvfrom, function returns bytes received
                  * b. ensure data is received in recv_buf
                  */
-                
+                socklen_t addrlen = sizeof(sockaddr_in);
+                memset(recv_buf, 0, PACKET_LEN);
+                int recv_len = recvfrom(sockfd, recv_buf, PACKET_LEN, 0, (struct sockaddr*) &addr, &addrlen);
+                if (recv_len < 0) {
+                    perror("recvfrom failed");
+                    exit(-1);
+                }
+
                 /** TODO: 5
                  * handle received packets based on received bytes
                  * a. if (i) two pairs of ipheader and icmpheader received, (ii) type is TIME_EXCEEDED, (iii) sequence is the same as ttl, and (iv) id is same as pid
@@ -136,18 +155,24 @@ void traceroute(char* dest) {
                  *    - check if bytes returned by recvfrom is at least 2 * (sizeof(ipheader) + sizeof(icmpheader))
                  *    - if yes, use the icmpheader from the first pair to detect if the type is ICMP_TYPE_EXCEEDED
                  *    - use the icmpheader from the second pair to match (i) seq == ttl, and (ii) id = pid
-                 * 
+                 *
                  * b. else if (i) type is ECHO_REPLY, and (ii) id is same as pid --> reached destination. Print ip and exit.
                  * HINT:
                  *    - should return only one icmpheader
                  *    - match the type to ICMP_ECHO_REPLY and id to pid
                  * c. otherwise ignore packet
-                 * 
+                 *
                  */
-               
-                // ----------------
-            }
-            else {
+                ipheader* ip = (ipheader*) recv_buf;
+                icmpheader* icmp = (icmpheader*) (recv_buf + sizeof(ipheader));
+                if (icmp->icmp_type == ICMP_ECHO_REPLY) {
+                    printf("%s ", inet_ntoa(ip->iph_sourceip));
+                    break;
+                } else if (icmp->icmp_type == ICMP_TIME_EXCEEDED)
+                    printf("%s ", inet_ntoa(ip->iph_sourceip));
+                else
+                    printf("unknown packet type %d\n", icmp->icmp_type);
+            } else {
                 perror("select failed");
                 exit(-1);
             }
@@ -156,6 +181,8 @@ void traceroute(char* dest) {
             /** TODO: 6
              * Check if timed out for MAX_RETRY times; increment ttl to move on to processing next hop
              */
+            ++ttl;
+            break;
         }
     }
     close(sockfd);
@@ -167,7 +194,7 @@ int main(int argc, char** argv) {
         printf("Usage: traceroute <destination hostname>\n");
         exit(-1);
     }
-    
+
     char* dest = argv[1];
     traceroute(dest);
 
